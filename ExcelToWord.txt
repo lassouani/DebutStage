@@ -1,0 +1,83 @@
+    Sub ExcelToWord()
+    
+    Dim wrdApp      As Object
+    Dim wrdDoc      As Object
+    
+    Dim Nblig       As Integer
+    Dim NbCol       As Integer
+    
+    Dim bookMark    As String
+    
+    Dim PathTemplateWord As String
+    Dim PathGenerationFile As String
+    
+    PathTemplateWord = "C:\Users\SOFIANE\Desktop\"
+    PathGenerationFile = "C:\Users\SOFIANE\Desktop\FicheEvolution\"
+    
+    
+            'count number of lines
+    Nblig = Cells.SpecialCells(xlCellTypeLastCell).Row
+    'MsgBox (Nblig)
+    
+            'count number of column
+    Range("A1").Select
+    NbCol = Selection.Column - 1
+    Selection.CurrentRegion.Select
+    Selection.Columns(Selection.Columns.Count).Select
+     NbCol = Selection.Column - NbCol
+    'MsgBox (NbCol)
+    
+    
+    Set wrdApp = CreateObject("Word.Application")
+   
+    
+    
+     For i = 2 To Nblig
+    
+    MsgBox ("Géneration de la Fiche N°" & i - 1)
+    
+                    'Open Template
+        Set wrdDoc = wrdApp.Documents.Open(PathTemplateWord & "Doc.docx")
+           wrdApp.Visible = True
+           
+                   'If the file is not found, we need to end the sub and let the user know
+               If wrdDoc Is Nothing Then
+                   MsgBox "Unable to find the Word file.", vbCritical, "File Not Found"
+                   wrdApp.Quit
+                   Set wrdApp = Nothing
+                   Exit Sub
+               End If
+               
+                    'Replace all bookmarks
+                wrdDoc.Bookmarks("Nom_FE").Range.Text = Cells(i, 1)
+                wrdDoc.Bookmarks("Num_Devis_rattache").Range.Text = Cells(i, 2)
+                wrdDoc.Bookmarks("Nom_Projet").Range.Text = Cells(i, 3)
+                wrdDoc.Bookmarks("Nom_DP_Client").Range.Text = Cells(i, 4)
+                wrdDoc.Bookmarks("Num_DP_client").Range.Text = Cells(i, 5)
+                wrdDoc.Bookmarks("Code_PAI").Range.Text = Cells(i, 6)
+                wrdDoc.Bookmarks("Nom_CP_SQLI").Range.Text = Cells(i, 7)
+                wrdDoc.Bookmarks("Num_CP_SQLI").Range.Text = Cells(i, 8)
+                wrdDoc.Bookmarks("Date_envoie").Range.Text = Cells(i, 9)
+                wrdDoc.Bookmarks("Description").Range.Text = Cells(i, 10)
+                wrdDoc.Bookmarks("info_livrable_jalons").Range.Text = Cells(i, 11)
+                wrdDoc.Bookmarks("NB_jour").Range.Text = Cells(i, 12)
+                wrdDoc.Bookmarks("TJM").Range.Text = Cells(i, 13)
+
+                wrdDoc.Bookmarks("SignetDate").Range.Text = Format(Now, "dd/mm/yyyy")
+                
+                    'Save File
+                wrdDoc.SaveAs (PathGenerationFile & "Result" & i & ".docx")
+
+    Next
+
+   
+    
+                    'Close File
+                wrdDoc.Close
+                wrdApp.Quit
+    
+    End Sub
+    
+    
+
+
